@@ -1,1 +1,1 @@
-# Telefonie IP - Projekt
+# Telefonia IP - Projekt
