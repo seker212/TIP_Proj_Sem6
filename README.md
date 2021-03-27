@@ -1,1 +1,3 @@
 # Telefonia IP - Projekt
+## Installing requirements
+The intentional way of installing dependencies is running `pip install -r requirements.txt` command. However installation of PyAudio on Windows systems might result in error. If it does, then download appropriate binary file form [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio). For example if you have python 3.9.1 64-bit version you want to download `PyAudio‑0.2.11‑cp39‑cp39‑win_amd64.whl` file.
