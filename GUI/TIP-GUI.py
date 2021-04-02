@@ -18,9 +18,9 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet("background-color: rgb(20,30,52);")
         MainWindow.setWindowTitle("TIP-Projekt")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
 
         #Logout button
-        self.centralwidget.setObjectName("centralwidget")
         self.logout_button = QtWidgets.QPushButton(self.centralwidget)
         self.logout_button.setGeometry(QtCore.QRect(180, 360, 61, 31))
         self.logout_button.setStyleSheet("background-color : rgb(45,55,82)")
@@ -270,7 +270,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.logout_button.setText(_translate("MainWindow", "Logout"))
-        self.pseudonim_label.setText(_translate("MainWindow", "Pseudonim"))
+        self.pseudonim_label.setText(_translate("MainWindow", "Nickname"))
         self.server_address_label.setText(_translate("MainWindow", "Server IP Address: "))
         self.ip_address_label.setText(_translate("MainWindow", "127.0.0.1"))
         self.participants_label.setText(_translate("MainWindow", "            Participants"))
