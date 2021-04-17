@@ -118,7 +118,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "TIP-Projekt"))
         self.pushButton.setText(_translate("MainWindow", "Join"))
         self.label.setText(_translate("MainWindow", "Join a serwer"))
-        self.label_2.setText(_translate("MainWindow", "Error"))
+        self.label_2.setText(_translate("MainWindow", "Error: Nickname already used"))
 
 
 #Run
