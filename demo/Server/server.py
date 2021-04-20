@@ -1,5 +1,11 @@
 import socket
 import threading
+
+class Connection(object):
+    def __init__(self,conn,address) -> None:
+        self.conn = conn
+        self.address = address
+
 class Server(object):
     def __init__(self,tcp_port,udp_port) -> None:
         self.ip = socket.gethostbyname(socket.gethostname())
@@ -24,8 +30,27 @@ class Server(object):
 
         self.tcp_sock.listen(20)
 
-        while True:
-            continue
+        while self.running:
+            try:
+                connection = Connection(self.tcp_sock.accept())
+                self.connections.append(connection)
+                threading.Thread(target=self.streamAudio,args=(connection)).start()
+
+            except Exception as err:
+                print(str(err))
+                pass
+        
+    def streamAudio(self,connection):
+        while self.running and (connection in self.connections):
+            try:
+                data = connection.conn.recv(1024)
+                for other_connection in self.connections:
+                    if other_connection != connection:
+                        other_connection.conn.send(data)
+            except:
+                connection.conn.close()
+                self.connections.remove(connection)
+
 
 server = Server(8000,8001)
 server.run()
