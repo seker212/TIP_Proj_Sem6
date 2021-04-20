@@ -8,7 +8,7 @@ class Connection(object):
 
 class Server(object):
     def __init__(self,tcp_port,udp_port) -> None:
-        self.ip = socket.gethostbyname(socket.gethostname())
+        self.ip = "127.0.0.1" # socket.gethostbyname(socket.gethostname())
         self.tcp_port = tcp_port
         #self.udp_port = udp_port
         self.running = True
@@ -32,9 +32,10 @@ class Server(object):
 
         while self.running:
             try:
-                connection = Connection(self.tcp_sock.accept())
+                conn, address = self.tcp_sock.accept()
+                connection = Connection(conn, address)
                 self.connections.append(connection)
-                threading.Thread(target=self.streamAudio,args=(connection)).start()
+                threading.Thread(target=self.streamAudio,args=[connection]).start()
 
             except Exception as err:
                 print(str(err))
