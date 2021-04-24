@@ -31,14 +31,16 @@ class Client(object):
         while True:
             try:
                 data = self.socket.recv(CHUNK)
-                self.audioHelper.audio_output_read(data)
-            except:
-                pass
+                self.audioHelper.audio_output_write(data)
+            except Exception as err:
+                print(err)
 
     def send_data(self):
         while True:
             try:
                 data = self.audioHelper.audio_input_read()
+                print(len(data))
                 self.socket.sendall(data)
-            except:
-                pass
+            except Exception as err:
+                print(err)
+                sys.exit(1)

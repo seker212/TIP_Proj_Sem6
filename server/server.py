@@ -19,8 +19,10 @@ class Server(object):
             #self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             #self.udp_sock.bind((self.ip,self.udp_port))
 
-        except:
+        except Exception as err:
             print('ERROR: couln\'t bind ports')
+            print('err')
+            sys.exit(1)
 
         self.connections = []
 
@@ -44,7 +46,7 @@ class Server(object):
     def streamAudio(self,connection):
         while self.running and (connection in self.connections):
             try:
-                data = connection.conn.recv(1024)
+                data = connection.conn.recv(1024*4)
                 for other_connection in self.connections:
                     if other_connection != connection:
                         other_connection.conn.send(data)
