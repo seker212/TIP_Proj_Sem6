@@ -5,10 +5,10 @@ from audio_module import *
 from settings import CHUNK
 
 class Client(object):
-    def __init__(self) -> None:
+    def __init__(self,target_ip,target_port) -> None:
         
-        self.target_ip = "127.0.0.1"
-        self.target_port = 8000
+        self.target_ip = target_ip
+        self.target_port = target_port
 
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,12 +20,6 @@ class Client(object):
             sys.exit(1)
     
         self.audioHelper = AudioHelper()
-
-        self.audioHelper.open_input_stream()
-        self.audioHelper.open_output_stream()
-
-        reciver = threading.Thread(target=self.receive_data).start()
-        sender = threading.Thread(target=self.send_data).start()
 
     def receive_data(self):
         while True:
@@ -44,3 +38,11 @@ class Client(object):
             except Exception as err:
                 print(err)
                 sys.exit(1)
+
+    def run_client(self):
+
+        self.audioHelper.open_input_stream()
+        self.audioHelper.open_output_stream()
+
+        reciver = threading.Thread(target=self.receive_data).start()
+        sender = threading.Thread(target=self.send_data).start()
