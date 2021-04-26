@@ -1,7 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from ..client.client_base import *
+import sys
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setup_Ui(self, MainWindow):
 
         #TextColors
         textColor = "QLabel { color : rgb(100,220,240); }"
@@ -122,11 +124,10 @@ class Ui_MainWindow(object):
 
 
 #Run
-if __name__ == "__main__":
-    import sys
+def run_login():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setup_Ui(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+    app.exec_()
