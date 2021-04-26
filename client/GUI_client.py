@@ -1,9 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import PyQt5
+import sys
+from client_base import *
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setup_Ui(self, MainWindow, client):
+        self.client = client
+
 
         #TextColors
         textColor = "QLabel { color : rgb(100,220,240); }"
@@ -56,6 +60,7 @@ class Ui_MainWindow(object):
         self.pseudonim_label.setObjectName("pseudonim_label")
         self.pseudonim_label.setStyleSheet(textColor)
         self.pseudonim_layout.addWidget(self.pseudonim_label)
+        self.pseudonim_label.setText(self.client.nick)
 
         #Bottom line
         self.line_2 = QtWidgets.QFrame(self.centralwidget)
@@ -270,7 +275,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.logout_button.setText(_translate("MainWindow", "Logout"))
-        self.pseudonim_label.setText(_translate("MainWindow", "Nickname"))
         self.server_address_label.setText(_translate("MainWindow", "Server IP Address: "))
         self.ip_address_label.setText(_translate("MainWindow", "127.0.0.1"))
         self.participants_label.setText(_translate("MainWindow", "            Participants"))
@@ -296,11 +300,9 @@ class Ui_MainWindow(object):
         self.participant9.setText(_translate("MainWindow", "..."))
 
 #Run
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+#def run_mainWindow(client):
+#    app = QtWidgets.QApplication(sys.argv)
+#    MainWindow = QtWidgets.QMainWindow()
+#    ui = Ui_MainWindow()
+#    ui.setup_Ui(MainWindow,client)
+#    MainWindow.show()

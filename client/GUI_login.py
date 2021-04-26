@@ -1,9 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from client_base import *
 import sys
+from abc import ABC, abstractmethod
 
-class Ui_MainWindow(object):
+class Ui_LoginWindow(ABC):
     def setup_Ui(self, MainWindow):
+
         self.client = None
 
         #TextColors
@@ -125,10 +127,10 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Join a serwer"))
 
 #Button press
+    @abstractmethod
     def create_client_connection(self):
-        add,port = self.get_address()
-        self.client = Client(add,port)
-        self.label_2.setText(self.client.error_message)
+        pass
+        #if(self.client.error_message == "Connected"):
 
 #Turn text into address
     def get_address(self):
@@ -139,12 +141,12 @@ class Ui_MainWindow(object):
         else:
             return "127.0.0.1",5000
 
-
 #Run
-def run_login():
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setup_Ui(MainWindow)
-    MainWindow.show()
-    app.exec_()
+#def run_login():
+#    app = QtWidgets.QApplication(sys.argv)
+#    MainWindow = QtWidgets.QMainWindow()
+#    ui = Ui_LoginWindow()
+#    ui.setup_Ui(MainWindow)
+#    MainWindow.show()
+#    app.exec_()
+

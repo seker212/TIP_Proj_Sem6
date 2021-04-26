@@ -5,11 +5,12 @@ from audio_module import *
 from settings import CHUNK
 
 class Client(object):
-    def __init__(self,target_ip,target_port) -> None:
+    def __init__(self,target_ip,target_port,nick) -> None:
         
         self.target_ip = target_ip
         self.target_port = target_port
         self.error_message = ""
+        self.nick = nick
 
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
