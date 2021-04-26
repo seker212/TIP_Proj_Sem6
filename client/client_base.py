@@ -9,15 +9,17 @@ class Client(object):
         
         self.target_ip = target_ip
         self.target_port = target_port
+        self.error_message = ""
 
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.target_ip,self.target_port))
+            self.error_message = "Connected"
 
         except Exception as err:
             print('ERROR: Counld\'t connect')
             print(err)
-            sys.exit(1)
+            self.error_message = "Couldn't connect!"
     
         self.audioHelper = AudioHelper()
 

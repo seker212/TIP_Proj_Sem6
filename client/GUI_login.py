@@ -4,6 +4,7 @@ import sys
 
 class Ui_MainWindow(object):
     def setup_Ui(self, MainWindow):
+        self.client = None
 
         #TextColors
         textColor = "QLabel { color : rgb(100,220,240); }"
@@ -72,6 +73,7 @@ class Ui_MainWindow(object):
         palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(100,220,240))
         self.pushButton.setPalette(palette)
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.clicked.connect(self.create_client_connection)
 
         #Header
         self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
@@ -107,6 +109,7 @@ class Ui_MainWindow(object):
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("Error")
         self.label_2.setStyleSheet("QLabel { color : rgb(240,240,100); }")
+        self.label_2.setText("")
         self.verticalLayout_2.addWidget(self.label_2)
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -120,7 +123,21 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "TIP-Projekt"))
         self.pushButton.setText(_translate("MainWindow", "Join"))
         self.label.setText(_translate("MainWindow", "Join a serwer"))
-        self.label_2.setText(_translate("MainWindow", "Error: Nickname already used"))
+
+#Button press
+    def create_client_connection(self):
+        add,port = self.get_address()
+        self.client = Client(add,port)
+        self.label_2.setText(self.client.error_message)
+
+#Turn text into address
+    def get_address(self):
+        string = self.lineEdit_2.text()
+        segments = string.split(":")
+        if(len(segments) == 2):
+            return segments[0],int(segments[1])
+        else:
+            return "127.0.0.1",5000
 
 
 #Run
