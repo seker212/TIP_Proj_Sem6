@@ -11,7 +11,8 @@ class main_master(GUI_login.Ui_LoginWindow):
         nick = self.lineEdit.text()
         self.client = Client(add,port,nick)
         self.label_2.setText(self.client.error_message)
-        heheszki(self.client,MainWindow)
+        if(self.client.connected):
+            heheszki(self.client,MainWindow)
 
 def heheszki(client,MainWindow):
     ui_main = GUI_client.Ui_MainWindow()

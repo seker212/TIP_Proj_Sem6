@@ -11,11 +11,13 @@ class Client(object):
         self.target_port = target_port
         self.error_message = ""
         self.nick = nick
+        self.connected = False
 
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.target_ip,self.target_port))
             self.error_message = "Connected"
+            self.connected = True
 
         except Exception as err:
             print('ERROR: Counld\'t connect')
