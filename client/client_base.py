@@ -29,7 +29,9 @@ class Client(object):
             if(approve == "ack"):
                 self.error_message = "Connected"
                 self.connected = True
-            else:
+            elif(approve == "ful"):
+                self.error_message = "Server is full!"
+            elif(approve == "nak"):
                 self.error_message = "Nick already taken!"
 
         except Exception as err:

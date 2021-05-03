@@ -13,6 +13,7 @@ class Server(object):
         self.tcp_port = tcp_port
         #self.udp_port = udp_port
         self.running = True
+        self.max_participants = 10
 
         try:
             self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,7 +39,10 @@ class Server(object):
                 conn, address = self.tcp_sock.accept()
                 nick = conn.recv(1024)
                 nick = str(nick, 'UTF-16')
-                if(self.validate_nick(nick)):
+                if (len(self.connections) >= self.max_participants):
+                    conn.send(bytes("ful",'UTF-8'))
+                    conn.close()
+                elif(self.validate_nick(nick)):
                     conn.send(bytes("ack",'UTF-8'))
                     connection = Connection(conn, address, nick)
                     self.connections.append(connection)
