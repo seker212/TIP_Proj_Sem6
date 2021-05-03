@@ -1,6 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from client_base import *
-import sys
 from abc import ABC, abstractmethod
 
 class Ui_LoginWindow(ABC):
@@ -14,6 +13,7 @@ class Ui_LoginWindow(ABC):
         #Main Window
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(210, 160)
+        MainWindow.setFixedSize(210, 160)
         font = QtGui.QFont()
         font.setFamily("Calibri")
         MainWindow.setFont(font)
@@ -130,7 +130,6 @@ class Ui_LoginWindow(ABC):
     @abstractmethod
     def create_client_connection(self):
         pass
-        #if(self.client.error_message == "Connected"):
 
 #Turn text into address
     def get_address(self):

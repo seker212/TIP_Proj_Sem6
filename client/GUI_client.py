@@ -1,11 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import PyQt5
-import sys
 from client_base import *
+from abc import ABC, abstractmethod
 
 
-class Ui_MainWindow(object):
-    def setup_Ui(self, MainWindow, client):
+class Ui_MainWindow(ABC):
+    def setup_Ui(self, MainWindow, client, server_ip):
         self.client = client
 
 
@@ -14,6 +13,7 @@ class Ui_MainWindow(object):
         
         #Main Window
         MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(250,400)
         MainWindow.setFixedSize(250, 400)
         font = QtGui.QFont()
         font.setFamily("Calibri")
@@ -32,6 +32,7 @@ class Ui_MainWindow(object):
         palette.setColor(QtGui.QPalette.ButtonText, QtGui.QColor(100,220,240))
         self.logout_button.setPalette(palette)
         self.logout_button.setObjectName("logout_button")
+        self.logout_button.clicked.connect(self.close_connection)
 
         #Top line
         self.line = QtWidgets.QFrame(self.centralwidget)
@@ -106,6 +107,7 @@ class Ui_MainWindow(object):
         self.ip_address_label.setTextFormat(QtCore.Qt.PlainText)
         self.ip_address_label.setObjectName("ip_address_label")
         self.ip_address_label.setStyleSheet(textColor)
+        self.ip_address_label.setText(server_ip)
         self.ip_layout.addWidget(self.ip_address_label)
 
         #Radiobutton
@@ -276,7 +278,6 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.logout_button.setText(_translate("MainWindow", "Logout"))
         self.server_address_label.setText(_translate("MainWindow", "Server IP Address: "))
-        self.ip_address_label.setText(_translate("MainWindow", "127.0.0.1"))
         self.participants_label.setText(_translate("MainWindow", "            Participants"))
         self.participants_number.setText(_translate("MainWindow", "10"))
         self.mute_box.setText(_translate("MainWindow", "Mute"))
@@ -298,6 +299,11 @@ class Ui_MainWindow(object):
         self.participant7.setText(_translate("MainWindow", "..."))
         self.participant8.setText(_translate("MainWindow", "..."))
         self.participant9.setText(_translate("MainWindow", "..."))
+
+#Close connection method placeholder
+    @abstractmethod
+    def close_connection(self):
+        pass
 
 #Run
 #def run_mainWindow(client):
