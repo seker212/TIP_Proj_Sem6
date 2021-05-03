@@ -1,12 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from client_base import *
 from abc import ABC, abstractmethod
+import threading, time
 
 
 class Ui_MainWindow(ABC):
-    def setup_Ui(self, MainWindow, client, server_ip):
+    def setup_Ui(self, MainWindow, client):
+        
         self.client = client
-
 
         #TextColors
         textColor = "QLabel { color : rgb(100,220,240); }"
@@ -107,7 +108,7 @@ class Ui_MainWindow(ABC):
         self.ip_address_label.setTextFormat(QtCore.Qt.PlainText)
         self.ip_address_label.setObjectName("ip_address_label")
         self.ip_address_label.setStyleSheet(textColor)
-        self.ip_address_label.setText(server_ip)
+        self.ip_address_label.setText(self.client.target_ip)
         self.ip_layout.addWidget(self.ip_address_label)
 
         #Radiobutton
@@ -273,13 +274,17 @@ class Ui_MainWindow(ABC):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.thread = Update_Thread()
+        self.thread.start()
+        self.thread.start_signal.connect(self.update_participants)
+
 #Setup the default
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.logout_button.setText(_translate("MainWindow", "Logout"))
         self.server_address_label.setText(_translate("MainWindow", "Server IP Address: "))
         self.participants_label.setText(_translate("MainWindow", "            Participants"))
-        self.participants_number.setText(_translate("MainWindow", "10"))
+        self.participants_number.setText(_translate("MainWindow", "1"))
         self.mute_box.setText(_translate("MainWindow", "Mute"))
         self.number_label_1.setText(_translate("MainWindow", "1."))
         self.number_label_2.setText(_translate("MainWindow", "2."))
@@ -290,20 +295,55 @@ class Ui_MainWindow(ABC):
         self.number_label_7.setText(_translate("MainWindow", "7."))
         self.number_label_8.setText(_translate("MainWindow", "8."))
         self.number_label_9.setText(_translate("MainWindow", "9."))
-        self.participant1.setText(_translate("MainWindow", "..."))
-        self.participant2.setText(_translate("MainWindow", "..."))
-        self.participant3.setText(_translate("MainWindow", "..."))
-        self.participant4.setText(_translate("MainWindow", "..."))
-        self.participant5.setText(_translate("MainWindow", "..."))
-        self.participant6.setText(_translate("MainWindow", "..."))
-        self.participant7.setText(_translate("MainWindow", "..."))
-        self.participant8.setText(_translate("MainWindow", "..."))
-        self.participant9.setText(_translate("MainWindow", "..."))
+        self.participant1.setText(_translate("MainWindow", " "))
+        self.participant2.setText(_translate("MainWindow", " "))
+        self.participant3.setText(_translate("MainWindow", " "))
+        self.participant4.setText(_translate("MainWindow", " "))
+        self.participant5.setText(_translate("MainWindow", " "))
+        self.participant6.setText(_translate("MainWindow", " "))
+        self.participant7.setText(_translate("MainWindow", " "))
+        self.participant8.setText(_translate("MainWindow", " "))
+        self.participant9.setText(_translate("MainWindow", " "))
+
+    def update_participants(self):
+        self.participants_number.setText(str(len(self.client.other_participants)+1))
+        if(len(self.client.other_participants)>0):
+            self.participant1.setText(self.client.other_participants[0])
+        if(len(self.client.other_participants)>1):
+            self.participant2.setText(self.client.other_participants[1])
+        if(len(self.client.other_participants)>2):
+            self.participant3.setText(self.client.other_participants[2])
+        if(len(self.client.other_participants)>3):
+            self.participant4.setText(self.client.other_participants[3])
+        if(len(self.client.other_participants)>4):
+            self.participant5.setText(self.client.other_participants[4])
+        if(len(self.client.other_participants)>5):
+            self.participant6.setText(self.client.other_participants[5])
+        if(len(self.client.other_participants)>6):
+            self.participant7.setText(self.client.other_participants[6])
+        if(len(self.client.other_participants)>7):
+            self.participant8.setText(self.client.other_participants[7])
+        if(len(self.client.other_participants)>8):
+            self.participant9.setText(self.client.other_participants[8])
 
 #Close connection method placeholder
     @abstractmethod
     def close_connection(self):
         pass
+
+class Update_Thread(QtCore.QThread):
+
+    start_signal = QtCore.pyqtSignal(bool)
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def run(self):
+        while True:
+            time.sleep(0.5)
+            self.start_signal.emit(True)
+
+
 
 #Run
 #def run_mainWindow(client):

@@ -1,5 +1,7 @@
 import socket
+import sys
 import threading
+import time
 
 class Connection(object):
     def __init__(self,conn,address, nick) -> None:
@@ -40,15 +42,16 @@ class Server(object):
                 nick = conn.recv(1024)
                 nick = str(nick, 'UTF-16')
                 if (len(self.connections) >= self.max_participants):
-                    conn.send(bytes("ful",'UTF-8'))
+                    conn.send(bytes("ful",'UTF-16'))
                     conn.close()
                 elif(self.validate_nick(nick)):
-                    conn.send(bytes("ack",'UTF-8'))
+                    conn.send(bytes("ack",'UTF-16'))
                     connection = Connection(conn, address, nick)
                     self.connections.append(connection)
                     threading.Thread(target=self.streamAudio,args=[connection]).start()
+                    self.update_nicks()
                 else:
-                    conn.send(bytes("nak",'UTF-8'))
+                    conn.send(bytes("nak",'UTF-16'))
                     conn.close()
 
             except Exception as err:
@@ -68,9 +71,24 @@ class Server(object):
     
     def validate_nick(self,nick):
         for con in self.connections:
-            if con.nick == nick:
+            if (con.nick == nick or nick == " " or nick == ""):
                 return False
         return True
+
+    def update_nicks(self):
+        time.sleep(0.2)
+        for any_connection in self.connections:
+            any_connection.conn.send(bytes("new",'UTF-16'))
+        time.sleep(0.001)
+        
+        for n in self.connections:
+            for any_connection in self.connections:
+                any_connection.conn.send(bytes(n.nick,'UTF-16'))
+            time.sleep(0.001)
+
+        for any_connection in self.connections:
+            any_connection.conn.send(bytes("fin",'UTF-16'))
+
 
 
 server = Server(8000,8001)

@@ -1,5 +1,5 @@
 import socket
-import sys
+import sys, time
 import threading
 from audio_module import *
 from settings import CHUNK
@@ -12,6 +12,7 @@ class Client(object):
         self.error_message = ""
         self.nick = nick
         self.connected = False
+        self.other_participants = []
 
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,8 +25,8 @@ class Client(object):
 
         try:
             self.socket.sendall(bytes(self.nick, 'UTF-16'))
-            approve = self.socket.recv(1024)
-            approve = str(approve, 'UTF-8')
+            approve = self.socket.recv(CHUNK)
+            approve = str(approve, 'UTF-16')
             if(approve == "ack"):
                 self.error_message = "Connected"
                 self.connected = True
@@ -39,6 +40,9 @@ class Client(object):
             self.error_message = "Some error occured!"
 
         self.audioHelper = AudioHelper()
+
+        #Test
+        reciver = threading.Thread(target=self.get_perticipants).start()
 
     def receive_data(self):
         while True:
@@ -65,3 +69,18 @@ class Client(object):
 
         reciver = threading.Thread(target=self.receive_data).start()
         sender = threading.Thread(target=self.send_data).start()
+
+    def get_perticipants(self):
+        while self.connected:
+            data = self.socket.recv(CHUNK)
+            if(str(data,'UTF-16') == "new"):
+                self.other_participants.clear()
+                while True: 
+                    data = self.socket.recv(CHUNK)
+                    data = str(data,'UTF-16')
+                    if(data == self.nick):
+                        continue
+                    elif(data == "fin"):
+                        break
+                    else:
+                        self.other_participants.append(data)

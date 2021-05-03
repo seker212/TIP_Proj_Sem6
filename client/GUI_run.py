@@ -12,14 +12,18 @@ class login_master(GUI_login.Ui_LoginWindow):
         self.client = Client(add,port,nick)
         self.label_2.setText(self.client.error_message)
         if(self.client.connected):
-            change_to_main(self.client,MainWindow,add,ui_main)
+            change_to_main(self.client,MainWindow,ui_main)
 
 class main_master(GUI_client.Ui_MainWindow):
     def close_connection(self):
         change_to_login(MainWindow, self.client)
 
-def change_to_main(client,MainWindow,server_ip,ui_main):
-    ui_main.setup_Ui(MainWindow,client,server_ip)
+def change_to_main(client,MainWindow,ui_main):
+    ui_main.setup_Ui(MainWindow,client)
+    #try:
+    #    ui_main.get_participants.start()
+    #except Exception as err:
+    #    print('err')
 
 def change_to_login(MainWindow, client):
     del client
