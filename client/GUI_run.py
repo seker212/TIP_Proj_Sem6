@@ -16,12 +16,14 @@ class login_master(GUI_login.Ui_LoginWindow):
 
 class main_master(GUI_client.Ui_MainWindow):
     def close_connection(self):
-        change_to_login(MainWindow)
+        change_to_login(MainWindow, self.client)
 
 def change_to_main(client,MainWindow,server_ip,ui_main):
     ui_main.setup_Ui(MainWindow,client,server_ip)
 
-def change_to_login(MainWindow):
+def change_to_login(MainWindow, client):
+    del client
+    ui_log.client = None
     ui_log.setup_Ui(MainWindow)
 
 app = QtWidgets.QApplication(sys.argv)
