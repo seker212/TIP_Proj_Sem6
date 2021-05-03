@@ -1,3 +1,7 @@
+#TODO encoding
+#TODO logout
+#TODO mute
+
 import socket
 import sys, time
 import threading

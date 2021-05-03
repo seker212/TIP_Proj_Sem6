@@ -1,3 +1,5 @@
+#TODO cleanup?
+
 import socket
 import sys
 import threading
@@ -32,6 +34,8 @@ class Server(object):
 
     def run(self):
         print('TCP running on: ' + str(self.ip) + ':' + str(self.tcp_port))
+
+        #TODO UDP
         #print('UDP running on: ' + str(self.ip) + ':' + str(self.udp_port))
 
         self.tcp_sock.listen(20)
