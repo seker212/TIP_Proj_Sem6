@@ -2,9 +2,10 @@ import socket
 import threading
 
 class Connection(object):
-    def __init__(self,conn,address) -> None:
+    def __init__(self,conn,address, nick) -> None:
         self.conn = conn
         self.address = address
+        self.nick = nick
 
 class Server(object):
     def __init__(self,tcp_port,udp_port) -> None:
@@ -35,9 +36,16 @@ class Server(object):
         while self.running:
             try:
                 conn, address = self.tcp_sock.accept()
-                connection = Connection(conn, address)
-                self.connections.append(connection)
-                threading.Thread(target=self.streamAudio,args=[connection]).start()
+                nick = conn.recv(1024)
+                nick = str(nick, 'UTF-16')
+                if(self.validate_nick(nick)):
+                    conn.sendall(bytes("ack",'UTF-8'))
+                    connection = Connection(conn, address, nick)
+                    self.connections.append(connection)
+                    threading.Thread(target=self.streamAudio,args=[connection]).start()
+                else:
+                    conn.sendall(bytes("nak",'UTF-8'))
+                    conn.close()
 
             except Exception as err:
                 print(str(err))
@@ -53,6 +61,12 @@ class Server(object):
             except:
                 connection.conn.close()
                 self.connections.remove(connection)
+    
+    def validate_nick(self,nick):
+        for con in self.connections:
+            if con.nick == nick:
+                return False
+        return True
 
 
 server = Server(8000,8001)

@@ -23,7 +23,14 @@ class Client(object):
             print('ERROR: Counld\'t connect')
             print(err)
             self.error_message = "Couldn't connect!"
-    
+
+        try:
+            self.socket.sendall(bytes(self.nick, 'UTF-16'))
+
+        except Exception as err:
+            print(err)
+            self.error_message = "Some error occured!"
+
         self.audioHelper = AudioHelper()
 
     def receive_data(self):
