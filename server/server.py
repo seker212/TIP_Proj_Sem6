@@ -39,12 +39,12 @@ class Server(object):
                 nick = conn.recv(1024)
                 nick = str(nick, 'UTF-16')
                 if(self.validate_nick(nick)):
-                    conn.sendall(bytes("ack",'UTF-8'))
+                    conn.send(bytes("ack",'UTF-8'))
                     connection = Connection(conn, address, nick)
                     self.connections.append(connection)
                     threading.Thread(target=self.streamAudio,args=[connection]).start()
                 else:
-                    conn.sendall(bytes("nak",'UTF-8'))
+                    conn.send(bytes("nak",'UTF-8'))
                     conn.close()
 
             except Exception as err:

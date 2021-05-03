@@ -16,8 +16,6 @@ class Client(object):
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.target_ip,self.target_port))
-            self.error_message = "Connected"
-            self.connected = True
 
         except Exception as err:
             print('ERROR: Counld\'t connect')
@@ -26,6 +24,13 @@ class Client(object):
 
         try:
             self.socket.sendall(bytes(self.nick, 'UTF-16'))
+            approve = self.socket.recv(1024)
+            approve = str(approve, 'UTF-8')
+            if(approve == "ack"):
+                self.error_message = "Connected"
+                self.connected = True
+            else:
+                self.error_message = "Nick already taken!"
 
         except Exception as err:
             print(err)
