@@ -6,24 +6,28 @@ import threading
 import time
 
 class Connection(object):
-    def __init__(self,conn,address, nick) -> None:
+    def __init__(self, conn, address, nick, udp_port) -> None:
         self.conn = conn
         self.address = address
-        self.nick = nick
+        self.nick: str = nick
+        self.udp_port: int = udp_port
+    
+    def __repr__(self) -> str:
+        return f'<Connetcion: {self.conn}; addr TCP: {self.address}; nick: {self.nick}; udp port: {self.udp_port}>'
 
 class Server(object):
     def __init__(self,tcp_port,udp_port) -> None:
-        self.ip = "127.0.0.1" # socket.gethostbyname(socket.gethostname())
+        self.ip = "127.0.0.1" # TODO: socket.gethostbyname(socket.gethostname())
         self.tcp_port = tcp_port
-        #self.udp_port = udp_port
+        self.udp_port = udp_port
         self.running = True
         self.max_participants = 10
 
         try:
             self.tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_sock.bind((self.ip,self.tcp_port))
-            #self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            #self.udp_sock.bind((self.ip,self.udp_port))
+            self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.udp_sock.bind((self.ip,self.udp_port))
 
         except Exception as err:
             print('ERROR: couln\'t bind ports')
@@ -36,23 +40,25 @@ class Server(object):
         print('TCP running on: ' + str(self.ip) + ':' + str(self.tcp_port))
 
         #TODO UDP
-        #print('UDP running on: ' + str(self.ip) + ':' + str(self.udp_port))
+        print('UDP running on: ' + str(self.ip) + ':' + str(self.udp_port))
 
         self.tcp_sock.listen(20)
 
+        threading.Thread(target=self.streamAudio).start()
         while self.running:
             try:
                 conn, address = self.tcp_sock.accept()
-                nick = conn.recv(1024)
-                nick = str(nick, 'UTF-16')
+                startinfo = conn.recv(1024)
+                startinfo = str(startinfo, 'UTF-16').split(":")
+                nick = startinfo[0]
                 if (len(self.connections) >= self.max_participants):
                     conn.send(bytes("ful",'UTF-16'))
                     conn.close()
-                elif(self.validate_nick(nick)):
-                    conn.send(bytes("ack",'UTF-16'))
-                    connection = Connection(conn, address, nick)
+                elif(len(startinfo) == 2 and self.validate_nick(nick) and startinfo[1].isdigit()):
+                    connection = Connection(conn, address, nick, int(startinfo[1]))
+                    conn.send(bytes(f"ack:{self.udp_port}",'UTF-16'))
                     self.connections.append(connection)
-                    threading.Thread(target=self.streamAudio,args=[connection]).start()
+                    print(connection)
                     self.update_nicks()
                 else:
                     conn.send(bytes("nak",'UTF-16'))
@@ -62,17 +68,30 @@ class Server(object):
                 print(str(err))
                 pass
         
-    def streamAudio(self,connection):
-        while self.running and (connection in self.connections):
-            try:
-                data = connection.conn.recv(1024*4)
-                for other_connection in self.connections:
-                    if other_connection != connection:
-                        other_connection.conn.send(data)
-            except:
-                connection.conn.close()
-                self.connections.remove(connection)
+    # def streamAudio(self,connection):
+    #     while self.running and (connection in self.connections):
+    #         try:
+    #             data = connection.conn.recv(1024*4)
+    #             for other_connection in self.connections: # TODO: Concurrency
+    #                 if other_connection != connection:
+    #                     other_connection.conn.send(data)
+    #         except:
+    #             connection.conn.close()
+    #             self.connections.remove(connection)
     
+    def streamAudio(self):
+        while self.running:
+            try:
+                data, addr = self.udp_sock.recvfrom(4096)
+                if self._is_in_connections(addr):
+                    for client in self.connections:
+                        if client.address[0] != addr[0] or client.udp_port != addr[1]:
+                            self.udp_sock.sendto(data, addr)
+
+            except Exception as err:
+                print(err)
+                sys.exit(1)
+
     def validate_nick(self,nick):
         for con in self.connections:
             if (con.nick == nick or nick == " " or nick == ""):
@@ -93,7 +112,11 @@ class Server(object):
         for any_connection in self.connections:
             any_connection.conn.send(bytes("fin",'UTF-16'))
 
-
+    def _is_in_connections(self, address) -> bool:
+        for conn in self.connections:
+            if conn.address[0] == address[0] and conn.udp_port == address[1]:
+                return True
+        return False
 
 server = Server(8000,8001)
 server.run()
