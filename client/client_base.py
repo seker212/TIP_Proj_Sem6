@@ -18,6 +18,7 @@ class Client(object):
         self.connected = False
         self.other_participants = []
         self.target_udp_port = None
+        self.muted = False
 
         try:
             self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -67,13 +68,14 @@ class Client(object):
 
     def send_data(self):
         while True:
-            try:
-                data = self.audioHelper.audio_input_read()
-                # print(len(data))
-                self.udp_socket.sendto(data, (self.target_ip, self.target_udp_port))
-            except Exception as err:
-                print(err)
-                sys.exit(1)
+            if not self.muted:
+                try:
+                    data = self.audioHelper.audio_input_read()
+                    # print(len(data))
+                    self.udp_socket.sendto(data, (self.target_ip, self.target_udp_port))
+                except Exception as err:
+                    print(err)
+                    sys.exit(1)
 
     def run_client(self):
 
@@ -97,6 +99,9 @@ class Client(object):
                         break
                     else:
                         self.other_participants.append(data)
+
+    def mute(self):
+        self.muted = not self.muted
 
 if __name__ == '__main__':
     c = Client("127.0.0.1",8000,"Tester3")
