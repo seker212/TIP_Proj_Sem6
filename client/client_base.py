@@ -87,7 +87,7 @@ class Client(object):
 
     def get_perticipants(self):
         while self.connected:
-            data = self.tcp_socket.recv(CHUNK)
+            data = self.tcp_socket.recv(CHUNK) # TODO: Catch exception
             if(str(data,'UTF-16') == "new"):
                 self.other_participants.clear()
                 while True: 

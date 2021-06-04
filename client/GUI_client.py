@@ -124,6 +124,7 @@ class Ui_MainWindow(ABC):
         font.setPointSize(8)
         self.mute_box.setFont(font)
         self.mute_box.setObjectName("mute_box")
+        self.mute_box.toggled.connect(self.client.mute)
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.WindowText, QtGui.QColor(100,220,240))
         self.mute_box.setPalette(palette)
