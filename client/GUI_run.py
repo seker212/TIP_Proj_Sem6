@@ -20,6 +20,8 @@ class main_master(GUI_client.Ui_MainWindow):
 
 def change_to_main(client,MainWindow,ui_main):
     ui_main.setup_Ui(MainWindow,client)
+    client.run_client()
+
     #try:
     #    ui_main.get_participants.start()
     #except Exception as err:
