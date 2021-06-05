@@ -1,6 +1,4 @@
-#TODO encoding
 #TODO logout
-#TODO mute
 
 import socket
 import sys, time
@@ -20,6 +18,9 @@ class Client(object):
         self.target_udp_port = None
         self.muted = False
 
+        self.reciver = None
+        self.sender = None
+
         try:
             self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.tcp_socket.connect((self.target_ip,self.target_port))
@@ -31,7 +32,6 @@ class Client(object):
             print('ERROR: Counld\'t connect')
             print(err)
             self.error_message = "Couldn't connect!"
-            sys.exit(1)
 
         try:
             self.tcp_socket.sendall(bytes(f"{self.nick}:{self.udp_port}", 'UTF-16'))
@@ -49,7 +49,6 @@ class Client(object):
         except Exception as err:
             print(err)
             self.error_message = "Some error occured!"
-            sys.exit(1)
 
         print(self.error_message)
         self.audioHelper = AudioHelper()
@@ -64,7 +63,6 @@ class Client(object):
                 self.audioHelper.audio_output_write(data)
             except Exception as err:
                 print(err)
-                sys.exit(1)
 
     def send_data(self):
         while True:
@@ -75,34 +73,45 @@ class Client(object):
                     self.udp_socket.sendto(data, (self.target_ip, self.target_udp_port))
                 except Exception as err:
                     print(err)
-                    sys.exit(1)
 
     def run_client(self):
 
         self.audioHelper.open_input_stream()
         self.audioHelper.open_output_stream()
 
-        reciver = threading.Thread(target=self.receive_data).start()
-        sender = threading.Thread(target=self.send_data).start()
+        self.reciver = threading.Thread(target=self.receive_data).start()
+        self.sender = threading.Thread(target=self.send_data).start()
 
     def get_perticipants(self):
         while self.connected:
-            data = self.tcp_socket.recv(CHUNK) # TODO: Catch exception
-            if(str(data,'UTF-16') == "new"):
-                self.other_participants.clear()
-                while True: 
-                    data = self.tcp_socket.recv(CHUNK)
-                    data = str(data,'UTF-16')
-                    if(data == self.nick):
-                        continue
-                    elif(data == "fin"):
-                        break
-                    else:
-                        self.other_participants.append(data)
+            try:
+                data = self.tcp_socket.recv(CHUNK)
+                if(str(data,'UTF-16') == "new"):
+                    self.other_participants.clear()
+                    while True: 
+                        data = self.tcp_socket.recv(CHUNK)
+                        data = str(data,'UTF-16')
+                        if(data == self.nick):
+                            continue
+                        elif(data == "fin"):
+                            break
+                        else:
+                            self.other_participants.append(data)
+            except socket.error as err:
+                    print(err)
+                    #break
 
     def mute(self):
         self.muted = not self.muted
 
-if __name__ == '__main__':
-    c = Client("127.0.0.1",8000,"Tester3")
-    c.run_client()
+    def stop(self):
+        try:
+            self.audioHelper.close_input_stream()
+            self.audioHelper.close_output_stream()
+            self.audioHelper.terminate()
+        except Exception as err:
+            print(err)
+
+#if __name__ == '__main__':
+#    c = Client("127.0.0.1",8000,"Tester3")
+#    c.run_client()

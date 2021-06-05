@@ -307,25 +307,28 @@ class Ui_MainWindow(ABC):
         self.participant9.setText(_translate("MainWindow", " "))
 
     def update_participants(self):
-        self.participants_number.setText(str(len(self.client.other_participants)+1))
-        if(len(self.client.other_participants)>0):
-            self.participant1.setText(self.client.other_participants[0])
-        if(len(self.client.other_participants)>1):
-            self.participant2.setText(self.client.other_participants[1])
-        if(len(self.client.other_participants)>2):
-            self.participant3.setText(self.client.other_participants[2])
-        if(len(self.client.other_participants)>3):
-            self.participant4.setText(self.client.other_participants[3])
-        if(len(self.client.other_participants)>4):
-            self.participant5.setText(self.client.other_participants[4])
-        if(len(self.client.other_participants)>5):
-            self.participant6.setText(self.client.other_participants[5])
-        if(len(self.client.other_participants)>6):
-            self.participant7.setText(self.client.other_participants[6])
-        if(len(self.client.other_participants)>7):
-            self.participant8.setText(self.client.other_participants[7])
-        if(len(self.client.other_participants)>8):
-            self.participant9.setText(self.client.other_participants[8])
+        try:
+            self.participants_number.setText(str(len(self.client.other_participants)+1))
+            if(len(self.client.other_participants)>0):
+                self.participant1.setText(self.client.other_participants[0])
+            if(len(self.client.other_participants)>1):
+                self.participant2.setText(self.client.other_participants[1])
+            if(len(self.client.other_participants)>2):
+                self.participant3.setText(self.client.other_participants[2])
+            if(len(self.client.other_participants)>3):
+                self.participant4.setText(self.client.other_participants[3])
+            if(len(self.client.other_participants)>4):
+                self.participant5.setText(self.client.other_participants[4])
+            if(len(self.client.other_participants)>5):
+                self.participant6.setText(self.client.other_participants[5])
+            if(len(self.client.other_participants)>6):
+                self.participant7.setText(self.client.other_participants[6])
+            if(len(self.client.other_participants)>7):
+                self.participant8.setText(self.client.other_participants[7])
+            if(len(self.client.other_participants)>8):
+                self.participant9.setText(self.client.other_participants[8])
+        except Exception as err:
+                pass
 
 #Close connection method placeholder
     @abstractmethod
@@ -343,8 +346,6 @@ class Update_Thread(QtCore.QThread):
         while True:
             time.sleep(0.5)
             self.start_signal.emit(True)
-
-
 
 #Run
 #def run_mainWindow(client):
