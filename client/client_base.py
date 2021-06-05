@@ -114,6 +114,8 @@ class Client(object):
         except Exception as err:
             print(err)
 
-#if __name__ == '__main__':
-#    c = Client("127.0.0.1",8000,"Tester3")
-#    c.run_client()
+if __name__ == '__main__':
+   c = Client("127.0.0.1",8000,"Tester3")
+   c.run_client()
+   while True:
+       pass

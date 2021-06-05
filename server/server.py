@@ -87,7 +87,7 @@ class Server(object):
                 if self._is_in_connections(addr):
                     for client in self.connections:
                         if client.address[0] != addr[0] or client.udp_port != addr[1]:
-                            self.udp_sock.sendto(data, addr)
+                            self.udp_sock.sendto(data, (client.address[0], client.udp_port))
 
             except Exception as err:
                 print(err)
