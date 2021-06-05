@@ -311,22 +311,40 @@ class Ui_MainWindow(ABC):
             self.participants_number.setText(str(len(self.client.other_participants)+1))
             if(len(self.client.other_participants)>0):
                 self.participant1.setText(self.client.other_participants[0])
+            else:
+                self.participant1.setText(" ")
             if(len(self.client.other_participants)>1):
                 self.participant2.setText(self.client.other_participants[1])
+            else:
+                self.participant2.setText(" ")
             if(len(self.client.other_participants)>2):
                 self.participant3.setText(self.client.other_participants[2])
+            else:
+                self.participant3.setText(" ")
             if(len(self.client.other_participants)>3):
                 self.participant4.setText(self.client.other_participants[3])
+            else:
+                self.participant4.setText(" ")
             if(len(self.client.other_participants)>4):
                 self.participant5.setText(self.client.other_participants[4])
+            else:
+                self.participant5.setText(" ")
             if(len(self.client.other_participants)>5):
                 self.participant6.setText(self.client.other_participants[5])
+            else:
+                self.participant6.setText(" ")
             if(len(self.client.other_participants)>6):
                 self.participant7.setText(self.client.other_participants[6])
+            else:
+                self.participant7.setText(" ")
             if(len(self.client.other_participants)>7):
                 self.participant8.setText(self.client.other_participants[7])
+            else:
+                self.participant8.setText(" ")
             if(len(self.client.other_participants)>8):
                 self.participant9.setText(self.client.other_participants[8])
+            else:
+                self.participant9.setText(" ")
         except Exception as err:
                 pass
 

@@ -57,7 +57,7 @@ class Client(object):
         reciver = threading.Thread(target=self.get_perticipants, daemon=True).start()
 
     def receive_data(self):
-        while True:
+        while self.connected:
             try:
                 data = self.udp_socket.recv(4096)
                 self.audioHelper.audio_output_write(data)
@@ -65,7 +65,7 @@ class Client(object):
                 print(err)
 
     def send_data(self):
-        while True:
+        while self.connected:
             if not self.muted:
                 try:
                     data = self.audioHelper.audio_input_read()
@@ -88,10 +88,10 @@ class Client(object):
                 data = self.tcp_socket.recv(CHUNK)
                 if(str(data,'UTF-16') == "new"):
                     self.other_participants.clear()
-                    while True: 
+                    while True:  
                         data = self.tcp_socket.recv(CHUNK)
                         data = str(data,'UTF-16')
-                        if(data == self.nick):
+                        if(data == self.nick or data == '0'):
                             continue
                         elif(data == "fin"):
                             break
@@ -99,13 +99,15 @@ class Client(object):
                             self.other_participants.append(data)
             except socket.error as err:
                     print(err)
-                    #break
 
     def mute(self):
         self.muted = not self.muted
 
     def stop(self):
         try:
+            self.tcp_socket.close()
+            self.udp_socket.close()
+            self.connected = False
             self.audioHelper.close_input_stream()
             self.audioHelper.close_output_stream()
             self.audioHelper.terminate()

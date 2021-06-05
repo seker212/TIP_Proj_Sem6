@@ -28,7 +28,7 @@ def change_to_main(client,MainWindow,ui_main):
     #    print('err')
 
 def change_to_login(MainWindow, client):
-    #TODO client.stop()
+    client.stop()
     del client
     ui_log.client = None
     ui_log.setup_Ui(MainWindow)
