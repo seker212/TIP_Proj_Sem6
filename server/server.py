@@ -44,7 +44,8 @@ class Server(object):
 
         self.tcp_sock.listen(20)
 
-        threading.Thread(target=self.streamAudio).start()
+        threading.Thread(target=self.streamAudio, daemon=True).start()
+        threading.Thread(target=self.ping_tcp, daemon=True).start()
         while self.running:
             try:
                 conn, address = self.tcp_sock.accept()
@@ -72,7 +73,7 @@ class Server(object):
     #     while self.running and (connection in self.connections):
     #         try:
     #             data = connection.conn.recv(1024*4)
-    #             for other_connection in self.connections: # TODO: Concurrency
+    #             for other_connection in self.connections:
     #                 if other_connection != connection:
     #                     other_connection.conn.send(data)
     #         except:
@@ -111,6 +112,22 @@ class Server(object):
 
         for any_connection in self.connections:
             any_connection.conn.send(bytes("fin",'UTF-16'))
+
+    def ping_tcp(self):
+        to_remove = []
+        while self.running:
+            time.sleep(1)
+            for conn in self.connections:
+                try:
+                    conn.conn.send(bytes("0", 'UTF-16'))
+                except ConnectionResetError as err:
+                    conn.conn.close()
+                    to_remove.append(conn)
+            if len(to_remove) > 0:
+                for c in to_remove:
+                    self.connections.remove(c)
+                to_remove = []
+                self.update_nicks()
 
     def _is_in_connections(self, address) -> bool:
         for conn in self.connections:

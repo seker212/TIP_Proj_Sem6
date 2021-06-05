@@ -54,7 +54,7 @@ class Client(object):
         self.audioHelper = AudioHelper()
 
         #Test
-        reciver = threading.Thread(target=self.get_perticipants).start()
+        reciver = threading.Thread(target=self.get_perticipants, daemon=True).start()
 
     def receive_data(self):
         while True:
@@ -79,8 +79,8 @@ class Client(object):
         self.audioHelper.open_input_stream()
         self.audioHelper.open_output_stream()
 
-        self.reciver = threading.Thread(target=self.receive_data).start()
-        self.sender = threading.Thread(target=self.send_data).start()
+        self.reciver = threading.Thread(target=self.receive_data, daemon=True).start()
+        self.sender = threading.Thread(target=self.send_data, daemon=True).start()
 
     def get_perticipants(self):
         while self.connected:
