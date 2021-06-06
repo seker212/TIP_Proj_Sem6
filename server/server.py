@@ -4,6 +4,7 @@ import socket
 import sys
 import threading
 import time
+from os import getenv
 
 class Connection(object):
     def __init__(self, conn, address, nick, udp_port) -> None:
@@ -16,8 +17,8 @@ class Connection(object):
         return f'<Connetcion: {self.conn}; addr TCP: {self.address}; nick: {self.nick}; udp port: {self.udp_port}>'
 
 class Server(object):
-    def __init__(self,tcp_port,udp_port) -> None:
-        self.ip = "127.0.0.1" # TODO: socket.gethostbyname(socket.gethostname())
+    def __init__(self,tcp_port,udp_port, ip) -> None:
+        self.ip = ip # TODO: socket.gethostbyname(socket.gethostname())
         self.tcp_port = tcp_port
         self.udp_port = udp_port
         self.running = True
@@ -31,7 +32,7 @@ class Server(object):
 
         except Exception as err:
             print('ERROR: couln\'t bind ports')
-            print('err')
+            print(err)
             sys.exit(1)
 
         self.connections = []
@@ -68,17 +69,6 @@ class Server(object):
             except Exception as err:
                 print(str(err))
                 pass
-        
-    # def streamAudio(self,connection):
-    #     while self.running and (connection in self.connections):
-    #         try:
-    #             data = connection.conn.recv(1024*4)
-    #             for other_connection in self.connections:
-    #                 if other_connection != connection:
-    #                     other_connection.conn.send(data)
-    #         except:
-    #             connection.conn.close()
-    #             self.connections.remove(connection)
     
     def streamAudio(self):
         while self.running:
@@ -120,7 +110,10 @@ class Server(object):
             for conn in self.connections:
                 try:
                     conn.conn.send(bytes("0", 'UTF-16'))
-                except ConnectionResetError as err:
+                except ConnectionResetError:
+                    conn.conn.close()
+                    to_remove.append(conn)
+                except BrokenPipeError:
                     conn.conn.close()
                     to_remove.append(conn)
             if len(to_remove) > 0:
@@ -135,5 +128,6 @@ class Server(object):
                 return True
         return False
 
-server = Server(8000,8001)
-server.run()
+if __name__ == '__main__':
+    server = Server(8000,8001, '0.0.0.0')
+    server.run()
