@@ -85,7 +85,7 @@ class Server(object):
 
     def validate_nick(self,nick):
         for con in self.connections:
-            if (con.nick == nick or nick == " " or nick == ""):
+            if (con.nick == nick or nick == " " or nick == "" or nick == "0"):
                 return False
         return True
 
